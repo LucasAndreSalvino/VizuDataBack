@@ -34,6 +34,12 @@ app.post('/api/signin', (req, res) => {
 
 app.post('/api/signup', (req, res, next) => {
 	
+User.findOne({email:req.body.email}, (err, users)=>{
+		if(err){
+			res.send({email:'serverError', password:'servererror'});
+		}if(users){
+			return res.send({email:'error', password:'error'});
+		}
 
 			email=req.body.email.toLowerCase();
 	  	const newUser = new User();
@@ -48,8 +54,20 @@ app.post('/api/signup', (req, res, next) => {
 	  		}
 	  	});
 	});
+		
+	});
 
-	
+app.get('/api/myVis', (req, res) => {
+  User.findOne({email:req.body.email}, (err, users)=>{
+		if(err){
+			res.send({email:'serverError', password:'servererror'});
+		}if(users){
+			return res.send({email:'error', password:'error'});
+		}
+
+		
+	});
+});
 
   	
 
