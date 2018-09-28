@@ -9,8 +9,8 @@ const UserSchema = new mongoose.Schema({
 	password:{
 		type:String,
 		default:''
-	}
-
+	},
+	visualizations:[mongoose.Schema.ObjectId]
 	});
 
 UserSchema.methods.generateHash = function(){

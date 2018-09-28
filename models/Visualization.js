@@ -1,16 +1,23 @@
 const mongoose = require('mongoose');
 
-const VisualitazionSchema = new mongoose.Schema({
-	email:{
-		type:String,
-		default:''
+const VisualizationSchema = new mongoose.Schema({
+	name: { 
+		type: String, 
+		unique: true 
 	},
 
-	password:{
-		type:String,
-		default:''
-	}
+	width:{
+		type:Number,
+		default:0
+	},
 
+	height:{
+		type:Number,
+		default:0
+	},
+	x:[Number],
+	y:[Number]
+	
 	});
 
-module.exports = mongoose.model('Visualitazion', VisualitazionSchema);
+module.exports = mongoose.model('Visualization', VisualizationSchema);

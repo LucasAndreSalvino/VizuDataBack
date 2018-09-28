@@ -9,18 +9,11 @@ app.use(bodyParser.json());
 //support parsing of application/x-www-form-urlencoded post data
 app.use(bodyParser.urlencoded({ extended: true }));
 const User = require('./models/User');
+const Visualization = require('./models/Visualization');
 const userSession = require('./models/UserSession');
 mongoose.connect('mongodb://localhost:27017/myapp');
 
-app.get('/api/customers', (req, res) => {
-  const customers = [
-    {id: 1, firstName: 'John', lastName: 'Doe'},
-    {id: 2, firstName: 'Brad', lastName: 'Traversy'},
-    {id: 3, firstName: 'Mary', lastName: 'Swanson'},
-  ];
 
-  res.json(customers);
-});
 
 app.post('/api/signin', (req, res) => {
   User.findOne({email:req.body.email}, (err, users)=>{
@@ -32,6 +25,8 @@ app.post('/api/signin', (req, res) => {
 	});
 });
 
+
+
 app.post('/api/signup', (req, res, next) => {
 	
 User.findOne({email:req.body.email}, (err, users)=>{
@@ -41,11 +36,12 @@ User.findOne({email:req.body.email}, (err, users)=>{
 			return res.send({email:'error', password:'error'});
 		}
 
-			email=req.body.email.toLowerCase();
+			email=req.body.email;
 	  	const newUser = new User();
 
 	  	newUser.email = email;
 	  	newUser.password = req.body.password;
+	  	newUser.visualizations = [];
 	  	newUser.save((err, user)=>{
 	  		if(err){
 	  			res.send({email:'erro', password:'erro'});
@@ -57,19 +53,24 @@ User.findOne({email:req.body.email}, (err, users)=>{
 		
 	});
 
-app.get('/api/myVis', (req, res) => {
-  User.findOne({email:req.body.email}, (err, users)=>{
-		if(err){
-			res.send({email:'serverError', password:'servererror'});
-		}if(users){
-			return res.send({email:'error', password:'error'});
-		}
-
-		
-	});
+app.post('/api/newVis', (req, res) => {
+	const newVis = new Visualization();
+		newVis.name=req.body.name;
+		newVis.width=req.body.width;
+		newVis.height=req.body.height;
+		newVis.x=req.body.x;
+		newVis.y=req.body.y;
+		newVis.save();
+  User.update({ "email" : req.body.email },{ $push: { "visualizations": newVis._id } }, (err,user)=>{
+  	if(err){
+  		res.send({error:"errror"});
+  	}else{
+  		res.send(user);
+  	}
+  });
+  
 });
 
-  	
 
   	
 
