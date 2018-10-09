@@ -72,10 +72,46 @@ app.post('/api/newVis', (req, res) => {
 });
 
 
+app.delete('/api/newVis/:idUser/:idVis', (req, res) => {
+	
+	User.update({ _id : req.params.idUser },{ $pull: { "visualizations": req.params.idVis} }, (err,user)=>{
+  	if(err){
+  		res.send({error:"errror"});
+  	}else{
+  		res.send(user);
+  	}
+  });
+	Visualization.findByIdAndRemove({_id:req.params.idVis}).then(function(vis){
+
+		res.send(vis);
+	});
+	
+  
+});
   	
 
+app.put('/api/newVis/:idVis', (req, res) => {
+	
+	Visualization.findByIdAndUpdate({ _id : req.params.idVis },{name:req.body.name, width:req.body.width, 
+		height:req.body.height, x:req.body.x, y:req.body.y}).then(function(vis){
+			res.send(vis);
+		});
+  
+});
 
+app.get('/api/newVis/:idUser', (req, res) => {
+	
+	User.findById(req.params.idUser, (err, user)=>{
+		if(err){
+			res.send({email:'serverError', password:'servererror'});
+		}if(user){
+			return res.send({visualizations:user.visualizations});
+		}
 
+	
+	});
+  
+});
 const port = 5000;
 
 app.listen(port, () => `Server running on port ${port}`);
